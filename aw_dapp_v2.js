@@ -113,7 +113,7 @@
 
       // Checking timer and set reload page if the mining is in progress
       timerEl = document.getElementById('timer').innerHTML.split(':');
-      remainSeconds = Number(timerEl[0]) * 60 + Number(timerEl[1]);
+      remainSeconds = Number(timerEl[0]) * 60 + Number(timerEl[1]) + 3;
 
       console.log('timer: ' + remainSeconds);
 
