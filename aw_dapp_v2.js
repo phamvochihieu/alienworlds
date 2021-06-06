@@ -17,7 +17,7 @@
 
   // Constant
   const ON_SOUND = false; // TODO: Set it to enable/disable sound
-  const ON_TESTING = true;
+  const ON_TESTING = false;
   const MILISECOND = 1000;
   const DEFAULT_TIMEOUT = 1 * MILISECOND;
   const LOG_COLOR = 'color: pink; background: black';
