@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         wax-dapps.site
+// @name         Auto click wax-dapps.site ver2
 // @namespace    wax-dapps.site
-// @version      1.0.0
+// @version      2.0.0
 // @description  Auto Mine & Claim
 // @author       miner-team
 // @match        http*://wax-dapps.site/alienworlds/mining
@@ -10,6 +10,11 @@
 // ==/UserScript==
 
 (function init() {
+
+  // Your tool delay time in second
+  const toolDelayTimeInSecond = 720;
+
+
   // Constant
   const ON_SOUND = false; // TODO: Set it to enable/disable sound
   const ON_TESTING = true;
@@ -18,18 +23,16 @@
   const LOG_COLOR = 'color: pink; background: black';
 
   // Time
-  const delayTime = 720 * MILISECOND; // TODO: Set your timer
+  const delayTime = toolDelayTimeInSecond * MILISECOND;
   const mineTime = 4 * MILISECOND;
   const claimTime = mineTime + 8 * MILISECOND;
-  const errorTime = claimTime + 10 * MILISECOND;
+  const errorTime = claimTime + 20 * MILISECOND;
   const timeToReload = claimTime + delayTime + 10 * MILISECOND;
 
-  // Helper function
-  function getRemainSeconds() {
-    let timerEl = document.getElementById('timer').innerHTML.split(':');
-    let remainSeconds = Number(timerEl[0]) * 60 + Number(timerEl[1]);
-    return remainSeconds;
-  }
+  // Variable
+  var timerEl;
+  var remainSeconds = 0;
+  var claimingError = true;
 
   // Testing
   if (ON_TESTING) {
@@ -70,7 +73,7 @@
   }
 
   // Click login
-  setTimeout(function () {
+  setTimeout(function() {
     (function waitLogin() {
       console.log('%c Login...', LOG_COLOR);
       // Check if already login
@@ -82,15 +85,62 @@
       let loginBtn = document.getElementById('login-button');
       if (!loginBtn.hasAttribute('disabled')) {
         loginBtn.click();
-        console.log('Click Login', new Date().toLocaleString());
+        console.log(new Date().toLocaleString() + 'Click Login');
       } else {
         setTimeout(waitLogin, DEFAULT_TIMEOUT);
       }
     })();
   }, mineTime);
 
-  // Reload if get error
-  setTimeout(function () {
+
+  // *** IMPORTANT CODE ***
+
+  // Click mine after reload page
+  setTimeout(function() {
+    (function waitMine() {
+      console.log('%c Mining...', LOG_COLOR);
+      let mineBtn = document.getElementById('mine-button');
+      if (!mineBtn.hasAttribute('disabled')) {
+        mineBtn.click();
+        console.log(new Date().toLocaleString() + 'Click Mine');
+      }
+    })();
+  }, mineTime);
+
+  // Click Claim
+  setTimeout(function() {
+    (function waitClaim() {
+
+      // Checking timer and set reload page if the mining is in progress
+      timerEl = document.getElementById('timer').innerHTML.split(':');
+      remainSeconds = Number(timerEl[0]) * 60 + Number(timerEl[1]);
+
+      console.log('timer: ' + remainSeconds);
+
+      if (remainSeconds > 0) {
+        claimingError = false;
+        console.log('Mining is in progress, reload the page after ' + remainSeconds + 'seconds', LOG_COLOR);
+        // Set time to reload the page
+        setTimeout(function() {
+          (function waitReload() {
+            //await delay(remainSeconds);
+            location.reload();
+          })();
+        }, remainSeconds * MILISECOND);
+      } else {
+
+        console.log('%c Claiming...', LOG_COLOR);
+        let claimBtn = document.getElementById('claim-button');
+        if (!claimBtn.hasAttribute('disabled')) {
+          claimBtn.click();
+          console.log('Click Claim', new Date().toLocaleString());
+        }
+      }
+    })();
+  }, claimTime);
+
+  // Reload if get error or can't resolve the popup....
+  setTimeout(function() {
     (function waitNextMine() {
       console.log('%c Waiting...', LOG_COLOR);
 
@@ -98,54 +148,22 @@
       if (notification.textContent.toLowerCase().toString().match('error')) {
         location.reload();
       } else {
-        console.log('Wait for next mining reload', new Date().toLocaleString());
+        if (notification.textContent.toString().match('ALIEN WORLDS - Mined')) {
+          console.log(new Date().toLocaleString() + 'Claim sucess, Wait for next mining reload');
+        } else {
+
+          // Can't resolve popup trying reload page
+          if (claimingError) {
+            location.reload();
+          }
+        }
         // setTimeout(waitNextMine, DEFAULT_TIMEOUT);
       }
     })();
   }, errorTime);
 
-  // *** IMPORTANT CODE ***
-
-  // Click mine after reload page
-  setTimeout(function () {
-    (function waitMine() {
-      console.log('%c Mining...', LOG_COLOR);
-
-      let remainSeconds = getRemainSeconds();
-
-      let mineBtn = document.getElementById('mine-button');
-      if (!mineBtn.hasAttribute('disabled') && remainSeconds === 0) {
-        mineBtn.click();
-        console.log('Click Mine', new Date().toLocaleString());
-      } else {
-        if (remainSeconds > 0) {
-          setTimeout(waitMine, remainSeconds * MILISECOND);
-        }
-      }
-    })();
-  }, mineTime);
-
-  // Click Claim
-  setTimeout(function () {
-    (function waitClaim() {
-      console.log('%c Claiming...', LOG_COLOR);
-
-      let remainSeconds = getRemainSeconds();
-
-      let claimBtn = document.getElementById('claim-button');
-      if (!claimBtn.hasAttribute('disabled') && remainSeconds === 0) {
-        claimBtn.click();
-        console.log('Click Claim', new Date().toLocaleString());
-      } else {
-        if (remainSeconds > 0) {
-          setTimeout(waitClaim, remainSeconds * MILISECOND);
-        }
-      }
-    })();
-  }, claimTime);
-
   // Set time to reload the page
-  setTimeout(function () {
+  setTimeout(function() {
     (function waitReload() {
       console.log('%c Set time to reload the page...', LOG_COLOR);
 
