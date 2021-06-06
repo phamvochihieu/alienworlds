@@ -85,7 +85,7 @@
       let loginBtn = document.getElementById('login-button');
       if (!loginBtn.hasAttribute('disabled')) {
         loginBtn.click();
-        console.log(new Date().toLocaleString() + 'Click Login');
+        console.log(new Date().toLocaleString() + ' Click Login');
       } else {
         setTimeout(waitLogin, DEFAULT_TIMEOUT);
       }
@@ -102,7 +102,7 @@
       let mineBtn = document.getElementById('mine-button');
       if (!mineBtn.hasAttribute('disabled')) {
         mineBtn.click();
-        console.log(new Date().toLocaleString() + 'Click Mine');
+        console.log(new Date().toLocaleString() + ' Click Mine');
       }
     })();
   }, mineTime);
@@ -133,7 +133,7 @@
         let claimBtn = document.getElementById('claim-button');
         if (!claimBtn.hasAttribute('disabled')) {
           claimBtn.click();
-          console.log('Click Claim', new Date().toLocaleString());
+          console.log(new Date().toLocaleString() + ' Click Claim');
         }
       }
     })();
