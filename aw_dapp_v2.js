@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Auto click wax-dapps.site ver2
+// @name         Auto click wax-dapps.site version 2.0
 // @namespace    wax-dapps.site
 // @version      2.0.0
 // @description  Auto Mine & Claim
@@ -7,17 +7,19 @@
 // @match        http*://wax-dapps.site/alienworlds/mining
 // @icon         https://www.google.com/s2/favicons?domain=wax-dapps.site
 // @grant        none
+// @updateURL    https://raw.githubusercontent.com/phamvochihieu/alienworlds/main/aw_dapp_v2.js
+// @downloadURL  https://raw.githubusercontent.com/phamvochihieu/alienworlds/main/aw_dapp_v2.js
 // ==/UserScript==
 
 (function init() {
 
   // Your tool delay time in second
-  const toolDelayTimeInSecond = 720;
+  const toolDelayTimeInSecond = 1620;
 
 
   // Constant
   const ON_SOUND = false; // TODO: Set it to enable/disable sound
-  const ON_TESTING = false;
+  const ON_TESTING = true;
   const MILISECOND = 1000;
   const DEFAULT_TIMEOUT = 1 * MILISECOND;
   const LOG_COLOR = 'color: pink; background: black';
@@ -25,14 +27,15 @@
   // Time
   const delayTime = toolDelayTimeInSecond * MILISECOND;
   const mineTime = 4 * MILISECOND;
-  const claimTime = mineTime + 8 * MILISECOND;
-  const errorTime = claimTime + 20 * MILISECOND;
+  const claimTime = mineTime + 5 * MILISECOND;
+  const errorTime = claimTime + 30 * MILISECOND;
   const timeToReload = claimTime + delayTime + 10 * MILISECOND;
 
   // Variable
   var timerEl;
   var remainSeconds = 0;
   var claimingError = true;
+  var timeToLogin = 0;
 
   // Testing
   if (ON_TESTING) {
@@ -84,8 +87,9 @@
       // Login
       let loginBtn = document.getElementById('login-button');
       if (!loginBtn.hasAttribute('disabled')) {
-        loginBtn.click();
-        console.log(new Date().toLocaleString() + ' Click Login');
+          timeToLogin = 10 * MILISECOND;
+          loginBtn.click();
+          console.log(new Date().toLocaleString() + ' Click Login');
       } else {
         setTimeout(waitLogin, DEFAULT_TIMEOUT);
       }
@@ -105,7 +109,7 @@
         console.log(new Date().toLocaleString() + ' Click Mine');
       }
     })();
-  }, mineTime);
+  }, mineTime + timeToLogin);
 
   // Click Claim
   setTimeout(function() {
@@ -126,7 +130,7 @@
             //await delay(remainSeconds);
             location.reload();
           })();
-        }, (remainSeconds + 3) * MILISECOND);
+        }, (remainSeconds+3) * MILISECOND);
       } else {
 
         console.log('%c Claiming...', LOG_COLOR);
@@ -137,7 +141,7 @@
         }
       }
     })();
-  }, claimTime);
+  }, claimTime + timeToLogin);
 
   // Reload if get error or can't resolve the popup....
   setTimeout(function() {
@@ -160,7 +164,7 @@
         // setTimeout(waitNextMine, DEFAULT_TIMEOUT);
       }
     })();
-  }, errorTime);
+  }, errorTime + timeToLogin);
 
   // Set time to reload the page
   setTimeout(function() {
@@ -170,5 +174,5 @@
       location.reload();
       // init();
     })();
-  }, timeToReload);
+  }, timeToReload + timeToLogin);
 })();
