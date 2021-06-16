@@ -20,10 +20,12 @@
   // Mining - excute every minutes
   setInterval(() => {
     let timer = document.getElementsByClassName('timer')[0];
-    let timerEl = timer.innerHTML.split(':');
-    if (!timerEl) return;
     let remainSeconds = 0;
-    remainSeconds = Number(timerEl[0]) * 60 + Number(timerEl[1]);
+    if (timer) {
+      let timerEl = timer.innerHTML.split(':');
+      remainSeconds = Number(timerEl[0]) * 60 + Number(timerEl[1]);
+    }
+
     if (!timer || remainSeconds < 30) {
 
       let buttons = document.getElementsByClassName('button raid');
