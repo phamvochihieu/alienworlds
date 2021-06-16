@@ -5,6 +5,8 @@
 // @description  Auto Mine & Claim
 // @author       miner-team
 // @match        http*://game2.metal-war.com
+// @updateURL    https://raw.githubusercontent.com/phamvochihieu/alienworlds/main/metal-war.js
+// @downloadURL  https://raw.githubusercontent.com/phamvochihieu/alienworlds/main/metal-war.js
 // @grant        none
 // ==/UserScript==
 
@@ -16,6 +18,7 @@
   const SECOND = 60;
   const DELAY = 2; // delay time for reparing
 
+  var raidTime = new Date();
 
   // Mining - excute every minutes
   setInterval(() => {
@@ -26,7 +29,9 @@
       remainSeconds = Number(timerEl[0]) * 60 + Number(timerEl[1]);
     }
 
-    if (!timer || remainSeconds < 30) {
+    if (!timer ||
+      remainSeconds < 100 ||
+      (new Date() - raidTime) > 59 * SECOND * MILISECOND) {
 
       let buttons = document.getElementsByClassName('button raid');
       let raid = null;
@@ -39,6 +44,7 @@
 
       if (raid) {
         raid.click();
+        raidTime = new Date();
         console.log(new Date().toLocaleString() + ' Click raid');
       } else {
         console.log(new Date().toLocaleString() + ' mining inprogress');
